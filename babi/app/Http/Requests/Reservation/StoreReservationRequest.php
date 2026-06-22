@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Reservation;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCategorieRequest extends FormRequest
+class StoreReservationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,11 @@ class UpdateCategorieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nom_categorie' => 'sometimes|string|max:100|unique:categories,nom_categorie,' . $this->route('categorie') . ',id_categorie',
-            'description'   => 'nullable|string',
+            'date_reservation'  => 'required|date',
+            'heure_reservation' => 'required|date_format:H:i',
+            'statut'            => 'in:en_attente,confirmee,annulee,terminee',
+            'id_utilisateur'    => 'required|exists:utilisateurs,id_utilisateur',
+            'id_service'        => 'required|exists:services,id_service',
         ];
     }
 }
