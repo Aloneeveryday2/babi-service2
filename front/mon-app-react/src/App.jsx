@@ -9,6 +9,8 @@ import PrestatairesAdmin from './pages/PrestatairesAdmin'
 import CategoriesAdmin from './pages/CategoriesAdmin'
 import ServicesAdmin from './pages/ServicesAdmin'
 import ProtectedRoute from './components/ProtectedRoute'
+import ReservationFormPage from './pages/ReservationFormPage'
+import MesReservationsPage from './pages/MesReservationsPage'
 
 function App() {
   return (
@@ -57,6 +59,8 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/services/:id/reserver" element={<ReservationFormPage />} />
+      <Route path="/reservations" element={<MesReservationsPage />} />
     </Routes>
   )
 }
