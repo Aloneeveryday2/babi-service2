@@ -154,7 +154,7 @@ function CategoriesAdmin() {
 
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-extrabold text-babi-dark font-bricolage mb-4">
               {editingId ? 'Modifier la catégorie' : 'Ajouter une catégorie'}
             </h2>

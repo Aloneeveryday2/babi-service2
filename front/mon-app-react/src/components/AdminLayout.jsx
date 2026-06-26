@@ -81,6 +81,12 @@ const ListIcon = () => (
   </svg>
 )
 
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 5H17.5M2.5 10H17.5M2.5 15H17.5" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
 const navItems = [
   { icon: <GridIcon />, label: 'Tableau de bord', to: '/admin' },
   { icon: <ShieldCheckIcon />, label: 'Validations', to: '/admin/validations' },
@@ -100,6 +106,7 @@ function AdminLayout({ active, title, subtitle, headerActions, validationsCount 
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
   const [denied, setDenied] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     apiGetMe().then((me) => {
@@ -127,7 +134,18 @@ function AdminLayout({ active, title, subtitle, headerActions, validationsCount 
 
   return (
     <div className="min-h-screen flex bg-babi-cream">
-      <aside className="w-64 bg-babi-dark flex flex-col justify-between p-6 shrink-0">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-babi-dark flex flex-col justify-between p-6 shrink-0 transform transition-transform duration-200 md:static md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div>
           <div className="flex items-center gap-2 mb-10">
             <span className="w-2.5 h-2.5 bg-babi-green rounded-full"></span>
@@ -141,6 +159,7 @@ function AdminLayout({ active, title, subtitle, headerActions, validationsCount 
               <Link
                 key={index}
                 to={item.to}
+                onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors ${
                   item.label === active ? 'bg-babi-green text-white' : 'text-gray-400 hover:bg-white/5'
                 }`}
@@ -171,8 +190,14 @@ function AdminLayout({ active, title, subtitle, headerActions, validationsCount 
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto min-w-0">
         <div className="flex items-center justify-between mb-8 gap-4">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden text-gray-500 hover:text-babi-dark transition-colors shrink-0"
+          >
+            <MenuIcon />
+          </button>
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2.5 w-full max-w-sm">
             <SearchIcon />
             <input type="text" placeholder="Rechercher..." className="bg-transparent border-none outline-none text-sm text-gray-700 w-full" />

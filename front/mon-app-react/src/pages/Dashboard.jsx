@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { apiGetMe, apiGetReservations, apiGetServices, apiLogout } from '../services/api'
 
 const GridIcon = () => (
@@ -53,6 +53,12 @@ const BellIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
     <path d="M15 6.66667C15 5.34058 14.4732 4.0688 13.5355 3.13112C12.5979 2.19344 11.3261 1.66667 10 1.66667C8.67392 1.66667 7.40215 2.19344 6.46447 3.13112C5.52679 4.0688 5 5.34058 5 6.66667C5 12.5 2.5 14.1667 2.5 14.1667H17.5C17.5 14.1667 15 12.5 15 6.66667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
     <path d="M11.4417 17.5C11.2952 17.7526 11.0849 17.9622 10.8319 18.1079C10.579 18.2536 10.2922 18.3304 10 18.3304C9.70782 18.3304 9.42102 18.2536 9.16804 18.1079C8.91505 17.9622 8.70477 17.7526 8.55833 17.5" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M2.5 5H17.5M2.5 10H17.5M2.5 15H17.5" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -148,6 +154,7 @@ function Dashboard() {
   const [reservations, setReservations] = useState([])
   const [recommandes, setRecommandes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   useEffect(() => {
     Promise.all([apiGetMe(), apiGetReservations(), apiGetServices()]).then(
@@ -199,7 +206,18 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen flex bg-babi-cream">
-      <aside className="w-72 bg-white border-r border-gray-100 flex flex-col justify-between p-6 shrink-0">
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 flex flex-col justify-between p-6 shrink-0 transform transition-transform duration-200 md:static md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <div>
           <div className="flex items-center gap-2 mb-10">
             <span className="w-2.5 h-2.5 bg-babi-green rounded-full"></span>
@@ -249,8 +267,14 @@ function Dashboard() {
         </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto min-w-0">
         <div className="flex items-center justify-between mb-8 gap-4">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden text-gray-500 hover:text-babi-dark transition-colors shrink-0"
+          >
+            <MenuIcon />
+          </button>
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2.5 w-full max-w-sm">
             <SearchIcon />
             <input type="text" placeholder="Rechercher..." className="bg-transparent border-none outline-none text-sm text-gray-700 w-full" />
@@ -270,9 +294,9 @@ function Dashboard() {
             <h1 className="text-3xl font-extrabold text-babi-dark font-bricolage">Bonjour, {user?.prenom ?? '...'} 👋</h1>
             <p className="text-gray-500 mt-1">Voici un aperçu de votre activité.</p>
           </div>
-          <button className="bg-babi-green text-white px-5 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all flex items-center gap-2 shrink-0">
+          <Link to="/services" className="bg-babi-green text-white px-5 py-3 rounded-full font-semibold hover:-translate-y-0.5 hover:shadow-lg transition-all flex items-center gap-2 shrink-0">
             <span className="text-lg leading-none">+</span> Nouvelle réservation
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -310,7 +334,7 @@ function Dashboard() {
                     <p className="text-sm text-gray-500">{prochaine.service?.nom_service}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-5 text-sm text-gray-500 mb-6">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-sm text-gray-500 mb-6">
                   <span className="flex items-center gap-1.5"><CalendarIcon /> {formatDateHeure(prochaine.date_reservation, prochaine.heure_reservation)}</span>
                   {prochaine.service?.prestataire?.localisation && (
                     <span className="flex items-center gap-1.5"><PinIcon /> {prochaine.service.prestataire.localisation}</span>
