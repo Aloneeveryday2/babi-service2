@@ -111,12 +111,12 @@ function Hero() {
         </div>
 
         <div className="relative">
-          <span className="absolute -top-4 left-4 z-20 inline-flex items-center gap-1.5 bg-babi-dark text-white text-xs font-semibold px-3 py-2 rounded-full shadow-lg">
+{/*           <span className="absolute -top-4 left-4 z-20 inline-flex items-center gap-1.5 bg-babi-dark text-white text-xs font-semibold px-3 py-2 rounded-full shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M8 1.33301L13.3333 3.33301V7.33301C13.3333 10.833 10.6667 13.333 8 14.6663C5.33333 13.333 2.66667 10.833 2.66667 7.33301V3.33301L8 1.33301Z" stroke="white" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Profils vérifiés
-          </span>
+          </span> */}
 
           <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
