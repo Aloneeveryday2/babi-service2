@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Prestataire;
 use App\Http\Requests\Prestataire\StorePrestaireRequest;
 use App\Http\Requests\Prestataire\UpdatePrestaireRequest;
+use App\Http\Requests\Prestataire\CandidaturePrestataireRequest;
 
 class PrestaireController extends Controller
 {
@@ -14,7 +15,7 @@ class PrestaireController extends Controller
      */
     public function index()
     {
-        return response()->json(Prestataire::with('services')->get());
+        return response()->json(Prestataire::with(['services', 'categorie'])->get());
     }
 
     /**
@@ -22,7 +23,22 @@ class PrestaireController extends Controller
      */
     public function store(StorePrestaireRequest $request)
     {
-        $prestataire = Prestataire::create($request->validated());
+        $prestataire = Prestataire::create([
+            ...$request->validated(),
+            'statut' => 'valide',
+        ]);
+        return response()->json($prestataire, 201);
+    }
+
+    /**
+     * Candidature publique : crée un prestataire en attente de validation par l'admin.
+     */
+    public function candidater(CandidaturePrestataireRequest $request)
+    {
+        $prestataire = Prestataire::create([
+            ...$request->validated(),
+            'statut' => 'en_attente',
+        ]);
         return response()->json($prestataire, 201);
     }
 

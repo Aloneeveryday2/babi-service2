@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Http\Requests\Reservation\StoreReservationRequest;
 use App\Http\Requests\Reservation\UpdateReservationRequest;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -14,8 +15,16 @@ class ReservationController extends Controller
      */
     public function index()
     {
+        if (auth()->user()?->role === 'admin') {
+            return response()->json(
+                Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
+                    ->orderByDesc('date_reservation')
+                    ->get()
+            );
+        }
+
         return response()->json(
-            Reservation::with(['utilisateur', 'service.prestataire'])
+            Reservation::with(['utilisateur', 'service.prestataire', 'avis'])
                 ->where('id_utilisateur', auth()->id())
                 ->orderByDesc('date_reservation')
                 ->get()
@@ -27,9 +36,11 @@ class ReservationController extends Controller
      */
     public function store(StoreReservationRequest $request)
     {
+        
         $reservation = Reservation::create([
             ...$request->validated(),
             'id_utilisateur' => auth()->id(),
+            'statut' => 'confirmee',
         ]);
         return response()->json($reservation, 201);
     }
@@ -39,7 +50,7 @@ class ReservationController extends Controller
      */
     public function show(string $id)
     {
-        $reservation = Reservation::with(['utilisateur', 'service.prestataire'])->findOrFail($id);
+        $reservation = Reservation::with(['utilisateur', 'service.prestataire', 'avis'])->findOrFail($id);
         abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         return response()->json($reservation);
     }
@@ -50,6 +61,12 @@ class ReservationController extends Controller
     public function update(UpdateReservationRequest $request, string $id)
     {
         $reservation = Reservation::findOrFail($id);
+
+        if (auth()->user()?->role === 'admin') {
+            $reservation->update($request->validated());
+            return response()->json($reservation->fresh());
+        }
+
         abort_if($reservation->id_utilisateur !== auth()->id(), 403);
         $reservation->update($request->validated());
         return response()->json($reservation);
